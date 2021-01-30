@@ -1,0 +1,28 @@
+People tend to use the relu layers of VGG-19 to construct gram matrices. Should be better to take the pre-relu feature map.
+
+Patch matching loss is for when we want to apply the style of hair to content hair. Helps if images aren't aligned. Not interesting for me.
+
+
+Start by doing style transfer network on one content+style -> VGG19 -> style+content loss.
+
+~~~~~~~~ Ideas ~~~~~~~~
+Local style transfer
+  Match the style vector with the content vector per feature map pixel so that the style isn't transfered globally
+  Style loss (gram matrices) sort of represents the global similarity, so a thing from bottom left spills over to top right. This is good if you want to have the general feel of an image transfer over to another, but not so good if you do harmonization as local information is important. Maybe gram-matrices on subregions could be used. Could be computationally expensive.
+
+Fast style transfer
+  Train feed forward network to create approximation of stylized image. In contrast to optimize ONE image
+
+~~~~~~~~ Papers ~~~~~~~~
+Partial Style Transferring and Feature Optimization for Style Transfer Network
+  Uses a mask to transfer some parts of image. Shitty results and is slow
+  https://lewkesy.github.io/data/Partial%20Style%20Transfer%20Network.pdf
+
+Exploring the structure of a real-time, arbitrary neural artistic stylization network
+  Style transfer network with good image.
+  https://arxiv.org/pdf/1705.06830v2.pdf
+
+
+Guided neural style transfer for shape stylizatio
+  Style transfer on logos. Uses distance transform for masking (soft masking)
+  https://storage.googleapis.com/plos-corpus-prod/10.1371/journal.pone.0233489/1/pone.0233489.pdf?X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Credential=wombat-sa%40plos-prod.iam.gserviceaccount.com%2F20210127%2Fauto%2Fstorage%2Fgoog4_request&X-Goog-Date=20210127T101256Z&X-Goog-Expires=3600&X-Goog-SignedHeaders=host&X-Goog-Signature=2a9edc812c3015b8929e3934dbea1c0380902869e72b48e5e1abaeccb20c6f4bc9737bdcb95732c7954b4794728bbbc3f1c005abe61b817adc40bc950991af4910457fdaf2e272acfed5a78f44e65217800f3e97601269a1dac78010931a4235e9cbc904d7bfab2dbcbbbb729564229fd7a891809b82924ad925562febaf327e6c5d43675c441ea11d166ad9c35541eeadc1a7d79fd3feacdeaf57d0c50d2682e47485e7b551a069a26b70c7db52e2a3a1867dd9933cc82d24b78923bb3ff8606e2a54060f9af497d86ef503e1acb9638476f7f154d81a0d4c12446d1b68c3c4ad7a3a938023d684c07d0998844b91e4a6c6b66ee7fcb2b9b70d34ee9eff2666

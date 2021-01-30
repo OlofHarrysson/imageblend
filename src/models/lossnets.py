@@ -24,7 +24,7 @@ class VGG19(nn.Module):
     # Before Relu
     self.output_layers = dict(
       style=[2, 7, 16, 25, 34],
-      content=[7, 34],
+      content=[16, 25],
       styled_content=[2, 7, 16, 25, 34],
     )
 

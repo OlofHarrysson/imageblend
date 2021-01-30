@@ -22,15 +22,20 @@ def calc_loss(outputs):
 
 def style_loss(style, styled_content):
   loss = 0
-  for x1, x2 in zip(style, styled_content):
+  shared_keys = set(style).intersection(set(styled_content))
+  assert shared_keys, 'No common layers'
+  for key in shared_keys:
+    x1, x2 = style[key], styled_content[key]
     loss += F.mse_loss(gram_matrix(x1), gram_matrix(x2))
   return loss
 
 
 def content_loss(content, styled_content):
   loss = 0
-  styled_content = [styled_content[-1]]  # TODO: Might select the wrong one
-  for x1, x2 in zip(content, styled_content):
+  shared_keys = set(content).intersection(set(styled_content))
+  assert shared_keys, 'No common layers'
+  for key in shared_keys:
+    x1, x2 = content[key], styled_content[key]
     loss += F.mse_loss(x1, x2)
   return loss
 

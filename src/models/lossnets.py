@@ -24,12 +24,12 @@ class VGG19(nn.Module):
     # Before Relu
     self.output_layers = dict(
       style=[2, 7, 16, 25, 34],
-      content=[34],
+      content=[16],
       styled_content=[2, 7, 16, 25, 34],
     )
 
   def forward(self, inputs):
-    outputs = defaultdict(list)
+    outputs = defaultdict(dict)
     for input_type, x in inputs.items():
       output_layers = list(self.output_layers[input_type])
       for mod_idx, mod in enumerate(self.features):
@@ -37,7 +37,7 @@ class VGG19(nn.Module):
           x = mod(x)
 
           if mod_idx in output_layers:
-            outputs[input_type].append(x)
+            outputs[input_type][mod_idx] = x
             output_layers.remove(mod_idx)
 
     return outputs

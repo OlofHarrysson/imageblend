@@ -72,7 +72,7 @@ class TrainingConfig():
     # self.style_weights[-1] = 10
 
     self.content_weights = defaultdict(lambda: 1)
-    self.content_weights[-1] = 10
+    # self.content_weights[-1] = 10
 
     # Conv layer outputs
     # Conv layers, 0, 2, 5, 7, 10, 12, 14, 16, 19, 21, 23, 25, 28, 30, 32, 34

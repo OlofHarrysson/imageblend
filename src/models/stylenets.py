@@ -69,7 +69,7 @@ class ResidualBlock(nn.Module):
 
 
 class UNet(nn.Module):
-  def __init__(self, n_channels, n_classes, bilinear=False):
+  def __init__(self, n_channels, n_classes, bilinear=True):
     super().__init__()
     self.n_channels = n_channels
     self.n_classes = n_classes  # Number of channels RGB
@@ -112,10 +112,10 @@ class DoubleConv(nn.Module):
       mid_channels = out_channels
     self.double_conv = nn.Sequential(
       nn.Conv2d(in_channels, mid_channels, kernel_size=3, padding=1),
-      nn.InstanceNorm2d(mid_channels, affine=True),
+      # nn.InstanceNorm2d(mid_channels, affine=True),
       nn.ReLU(inplace=True),
       nn.Conv2d(mid_channels, out_channels, kernel_size=3, padding=1),
-      nn.InstanceNorm2d(out_channels, affine=True),
+      # nn.InstanceNorm2d(out_channels, affine=True),
       nn.ReLU(inplace=True),
     )
 

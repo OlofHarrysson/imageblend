@@ -14,18 +14,14 @@ class VGG19(nn.Module):
     for param in self.features.parameters():
       param.requires_grad = False
 
-    # self.output_layers = dict(
-    #   style=[3, 8, 17, 26, 35],
-    #   # content=[26],  # 8 or 26
-    #   content=[3, 8, 17, 26, 35],  # 8 or 26
-    #   styled_content=[3, 8, 17, 26, 35],
-    # )
-
-    # Before Relu
+    # Conv layer outputs
+    # Conv layers, 0, 2, 5, 7, 10, 12, 14, 16, 19, 21, 23, 25, 28, 30, 32, 34
     self.output_layers = dict(
-      style=[2],
+      style=[0, 2, 5, 7, 10, 12, 14, 16, 19, 21, 23, 25, 28, 30, 32, 34],
       content=[25],
-      styled_content=[2, 7, 16, 25, 34],
+      styled_content=[
+        0, 2, 5, 7, 10, 12, 14, 16, 19, 21, 23, 25, 28, 30, 32, 34
+      ],
     )
 
   def forward(self, inputs):
@@ -41,33 +37,3 @@ class VGG19(nn.Module):
             output_layers.remove(mod_idx)
 
     return outputs
-
-
-# class VGG16(VGG19):
-#   def __init__(self):
-#     super().__init__()
-#     # Load VGG Skeleton, Pretrained Weights
-#     vgg16_features = models.vgg16(pretrained=True)
-#     self.features = vgg16_features.features
-
-#     # Turn-off Gradient History
-#     for param in self.features.parameters():
-#       param.requires_grad = False
-
-#     self.output_layers = dict(
-#         style=[3, 8, 17, 26, 35],
-#         content=[26],
-#         styled_content=[3, 8, 17, 26, 35],
-#       )
-
-#   def forward(self, x):
-#     layers = {'3': 'relu1_2', '8': 'relu2_2', '15': 'relu3_3', '22': 'relu4_3'}
-#     features = {}
-#     for name, layer in self.features._modules.items():
-#       x = layer(x)
-#       if name in layers:
-#         features[layers[name]] = x
-#         if (name == '22'):
-#           break
-
-#     return features

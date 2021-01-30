@@ -14,7 +14,7 @@ def setup_dataloaders():
 
 def setup_trainloader():
   transforms = get_train_transforms()
-  dataset_dir = get_project_root() / 'datasets' / 'easy'
+  dataset_dir = get_project_root() / 'datasets' / 'city'
   dataset = ImageTransfer(dataset_dir, transforms)
   return DataLoader(dataset,
                     batch_size=get_config().batch_size,

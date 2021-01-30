@@ -81,7 +81,8 @@ class TrainLaptop(TrainingConfig):
 
 
 @anyfig.config_class
-class TrainMegaMachine(TrainingConfig):
+class Colab(TrainingConfig):
   def __init__(self):
     super().__init__()
-    self.batch_size = self.batch_size * 4
+    self.misc.log_data = True
+    self.input_size = 256

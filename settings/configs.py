@@ -103,4 +103,4 @@ class Colab(TrainingConfig):
   def __init__(self):
     super().__init__()
     self.misc.log_data = True
-    self.input_size = 256
+    self.input_size = 512

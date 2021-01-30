@@ -69,7 +69,7 @@ class ResidualBlock(nn.Module):
 
 
 class UNet(nn.Module):
-  def __init__(self, n_channels, n_classes, bilinear=True):
+  def __init__(self, n_channels, n_classes, bilinear=False):
     super().__init__()
     self.n_channels = n_channels
     self.n_classes = n_classes  # Number of channels RGB
@@ -99,7 +99,6 @@ class UNet(nn.Module):
     x = self.up3(x, x2)
     x = self.up4(x, x1)
     x = self.outc(x)
-    x = x + inputs
     x = (self.tanh(x) + 1) * 255 / 2  # [0, 255]
 
     return x

@@ -64,7 +64,7 @@ class TrainingConfig():
     self.misc = MiscConfig()
 
     # Weight for losses
-    self.style_loss_weight = 4e2
+    self.style_loss_weight = 4e4
     self.content_loss_weight = 1
 
     # Loss weights for layers
@@ -80,7 +80,7 @@ class TrainingConfig():
     # -1 equals the raw-styled image
     # 37 is avg_pooling
     self.style_layers = [
-      -1, 0, 2, 5, 7, 10, 12, 14, 16, 19, 21, 23, 25, 28, 30, 32, 34
+      -1, 1, 3, 6, 8, 11, 13, 15, 17, 20, 22, 24, 26, 29, 31, 33, 35
     ]
     self.content_layers = [37]
     self.styled_content_layers = set(self.style_layers + self.content_layers)

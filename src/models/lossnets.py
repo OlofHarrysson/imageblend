@@ -16,7 +16,8 @@ class VGG19(nn.Module):
 
     self.output_layers = dict(
       style=[3, 8, 17, 26, 35],
-      content=[26],  # 8 or 26
+      # content=[26],  # 8 or 26
+      content=[3, 8, 17, 26, 35],  # 8 or 26
       styled_content=[3, 8, 17, 26, 35],
     )
 

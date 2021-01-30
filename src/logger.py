@@ -23,7 +23,7 @@ class Logger():
   def __init__(self):
     config = get_config()
     if config.misc.log_data:
-      outpath = f'output/visdom_{config.misc.start_time}.txt'
+      # outpath = f'output/visdom_{config.misc.start_time}.txt'
       try:
         # self.vis = visdom.Visdom(log_to_filename=outpath)
         self.vis = visdom.Visdom()

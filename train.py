@@ -49,8 +49,9 @@ def train(config):
   logger.log_image(un_norm_img(content_img[0]), 'Content Image')
 
   # Training loop
-  # style_img = style_img.to(model.device)
-  # content_img = content_img.to(model.device)
+  style_img = style_img.to(model.device)
+  content_img = content_img.to(model.device)
+  styled_image = styled_image.to(model.device)
   style_fmaps = model.predict(dict(style=style_img))
   content_fmaps = model.predict(dict(content=content_img))
 

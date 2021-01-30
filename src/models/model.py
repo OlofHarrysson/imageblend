@@ -41,7 +41,6 @@ class MyModel(nn.Module):
     inputs['styled_content'] = styled_content
 
     return self.loss_net(inputs), styled_img[0]
-    # return self.loss_net(inputs), styled_img[0]
 
   def predict(self, inputs):
     with torch.no_grad():

@@ -29,7 +29,7 @@ def style_loss(style, styled_content):
 
 def content_loss(content, styled_content):
   loss = 0
-  styled_content = [styled_content[1]]  # TODO: Might select the wrong one
+  styled_content = [styled_content[-2]]  # TODO: Might select the wrong one
   for x1, x2 in zip(content, styled_content):
     loss += F.mse_loss(x1, x2)
   return loss

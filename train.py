@@ -7,6 +7,7 @@ from torch.cuda.amp import GradScaler, autocast
 from torch.optim.lr_scheduler import CosineAnnealingLR
 from PIL import Image
 from pathlib import Path
+from progressbar import progressbar
 
 from src.data.data import setup_dataloaders
 from src.models.model import get_model
@@ -55,7 +56,8 @@ def train(config):
   style_fmaps = model.predict(dict(style=style_img))
   content_fmaps = model.predict(dict(content=content_img))
 
-  for optim_steps in range(config.optim_steps):
+  for optim_steps in progressbar(range(config.optim_steps),
+                                 redirect_stdout=True):
     # Forward pass
     with autocast(False):
       optimizer.zero_grad()
@@ -74,12 +76,10 @@ def train(config):
 
       # Decrease learning rate
       lr_scheduler.step()
-      print(
-        f"Step: {optim_steps}, loss: {loss.item()}, style: {loss_dict['style']}, content: {loss_dict['content']}"
-      )
 
       # Log
       logger.log_image(styled_img, 'Styled Image')
+      logger.log_losses(loss_dict, optim_steps)
 
       import numpy as np
       # pil_img = (styled_img * 255).astype(np.uint8)

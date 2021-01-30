@@ -1,6 +1,8 @@
 import visdom
 import functools
 from anyfig import get_config
+import numpy as np
+
 from .utils import plotly_plots as plts
 
 
@@ -44,3 +46,39 @@ class Logger():
     title = f'{name} Accuracy'.title()
     plot = plts.accuracy_plot(self.vis.line, title)
     plot(X=[step], Y=[accuracy])
+
+  @log_if_active
+  def log_losses(self, loss_dict, step):
+    legend, losses = [], []
+    for name, loss in loss_dict.items():
+      legend.append(name)
+      losses.append(loss.item())
+
+    tot_loss = sum(losses)
+    accumulated_loss = 0
+    Y = []
+    for loss in losses:
+      Y.append((accumulated_loss + loss) / tot_loss)
+      accumulated_loss += loss
+
+    self.vis.line(Y=np.array(Y).reshape(1, -1),
+                  X=[step],
+                  update='append',
+                  win='losspercent',
+                  opts=dict(fillarea=True,
+                            xlabel='Steps',
+                            ylabel='Percentage',
+                            title='Loss Percentage',
+                            stackgroup='one',
+                            legend=legend))
+
+    all_losses = losses + [tot_loss]
+    legends = legend + ['Total']
+    self.vis.line(Y=np.array(all_losses).reshape(1, -1),
+                  X=[step],
+                  update='append',
+                  win='TotalLoss',
+                  opts=dict(xlabel='Steps',
+                            ylabel='Loss',
+                            title='Training Loss',
+                            legend=legends))

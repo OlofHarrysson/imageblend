@@ -16,8 +16,9 @@ class VGG19(nn.Module):
 
     # Conv layer outputs
     # Conv layers, 0, 2, 5, 7, 10, 12, 14, 16, 19, 21, 23, 25, 28, 30, 32, 34
+    # -1 equals the raw-styled image
     self.output_layers = dict(
-      style=[0, 2, 5, 7, 10, 12, 14, 16, 19, 21, 23, 25, 28, 30, 32, 34],
+      style=[7, 10, 12, 14, 16, 19, 21, 23, 25, 28, 30, 32, 34],
       content=[-1, 25],
       styled_content=[
         -1, 0, 2, 5, 7, 10, 12, 14, 16, 19, 21, 23, 25, 28, 30, 32, 34

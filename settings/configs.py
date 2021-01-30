@@ -75,13 +75,14 @@ class TrainingConfig():
     # self.content_weights[-1] = 10
 
     # Conv layer outputs
-    # Conv layers, 0, 2, 5, 7, 10, 12, 14, 16, 19, 21, 23, 25, 28, 30, 32, 34
+    # Conv layers: 0, 2, 5, 7, 10, 12, 14, 16, 19, 21, 23, 25, 28, 30, 32, 34
+    # Relu layers: 1, 3, 6, 8, 11, 13, 15, 17, 20, 22, 24, 26, 29, 31, 33, 35
     # -1 equals the raw-styled image
     # 37 is avg_pooling
     self.style_layers = [
       -1, 0, 2, 5, 7, 10, 12, 14, 16, 19, 21, 23, 25, 28, 30, 32, 34
     ]
-    self.content_layers = [37]
+    self.content_layers = [-1, 37]
     self.styled_content_layers = set(self.style_layers + self.content_layers)
 
 

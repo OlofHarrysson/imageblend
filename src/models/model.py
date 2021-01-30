@@ -22,8 +22,8 @@ class MyModel(nn.Module):
     super().__init__()
     self.device = 'cpu' if config.gpu < 0 else torch.device('cuda', config.gpu)
 
-    # self.stylenet = stylenets.TransformerResNextNetwork_Pruned(alpha=0.3)
-    self.stylenet = stylenets.UNet(3, 3)
+    self.stylenet = stylenets.TransformerResNextNetwork_Pruned(alpha=1.0)
+    # self.stylenet = stylenets.UNet(3, 3)
     # self.stylenet = stylenets.InstanceNet()
     self.loss_net = lossnets.VGG19()
 

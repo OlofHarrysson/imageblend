@@ -62,7 +62,7 @@ class TrainingConfig():
     # Misc configs
     self.misc = MiscConfig()
 
-    self.style_loss_weight = 5e3
+    self.style_loss_weight = 7.5e3
     self.content_loss_weight = 1
 
 

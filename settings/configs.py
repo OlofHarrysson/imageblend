@@ -80,7 +80,7 @@ class TrainingConfig():
     self.style_layers = [
       -1, 0, 2, 5, 7, 10, 12, 14, 16, 19, 21, 23, 25, 28, 30, 32, 34
     ]
-    self.content_layers = [16, 21, 28, 34]
+    self.content_layers = [-1, 16, 21, 28, 34]
     self.styled_content_layers = set(self.style_layers + self.content_layers)
 
 

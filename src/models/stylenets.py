@@ -88,8 +88,8 @@ class UNet(nn.Module):
     self.outc = OutConv(64, n_classes)
     self.tanh = nn.Tanh()
 
-  def forward(self, x):
-    x1 = self.inc(x)
+  def forward(self, inputs):
+    x1 = self.inc(inputs)
     x2 = self.down1(x1)
     x3 = self.down2(x2)
     x4 = self.down3(x3)
@@ -99,8 +99,8 @@ class UNet(nn.Module):
     x = self.up3(x, x2)
     x = self.up4(x, x1)
     x = self.outc(x)
+    x = x + inputs
     x = (self.tanh(x) + 1) * 255 / 2  # [0, 255]
-    # print(x.min(), x.max())
 
     return x
 

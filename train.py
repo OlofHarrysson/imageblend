@@ -6,6 +6,7 @@ import torch.nn as nn
 from torch.cuda.amp import GradScaler, autocast
 from torch.optim.lr_scheduler import CosineAnnealingLR
 from PIL import Image
+from pathlib import Path
 
 from src.data.data import setup_dataloaders
 from src.models.model import get_model
@@ -90,7 +91,9 @@ def train(config):
       # pil_img = (styled_img * 255).astype(np.uint8)
       pil_img = styled_img.astype(np.uint8)
       pil_img = np.moveaxis(pil_img, 0, -1)
-      Image.fromarray(pil_img).save(f'output/stylenet/{optim_steps}.png')
+      outdir = Path('output') / 'stylenet'
+      outdir.mkdir(parents=True, exist_ok=True)
+      Image.fromarray(pil_img).save(outdir / f'{optim_steps}.png')
 
 
 if __name__ == '__main__':

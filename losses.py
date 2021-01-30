@@ -27,7 +27,7 @@ def style_loss(style, styled_content):
   for key in shared_keys:
     x1, x2 = style[key], styled_content[key]
     loss += F.mse_loss(gram_matrix(x1), gram_matrix(x2))
-  return loss
+  return loss / len(shared_keys)
 
 
 def content_loss(content, styled_content):
@@ -37,7 +37,7 @@ def content_loss(content, styled_content):
   for key in shared_keys:
     x1, x2 = content[key], styled_content[key]
     loss += F.mse_loss(x1, x2)
-  return loss
+  return loss / len(shared_keys)
 
 
 # def gram_matrix(x):

@@ -14,11 +14,18 @@ class VGG19(nn.Module):
     for param in self.features.parameters():
       param.requires_grad = False
 
+    # self.output_layers = dict(
+    #   style=[3, 8, 17, 26, 35],
+    #   # content=[26],  # 8 or 26
+    #   content=[3, 8, 17, 26, 35],  # 8 or 26
+    #   styled_content=[3, 8, 17, 26, 35],
+    # )
+
+    # Before Relu
     self.output_layers = dict(
-      style=[3, 8, 17, 26, 35],
-      # content=[26],  # 8 or 26
-      content=[3, 8, 17, 26, 35],  # 8 or 26
-      styled_content=[3, 8, 17, 26, 35],
+      style=[2, 7, 16, 25, 34],
+      content=[2, 7, 16, 25, 34],
+      styled_content=[2, 7, 16, 25, 34],
     )
 
   def forward(self, inputs):

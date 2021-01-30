@@ -9,7 +9,10 @@ class VGG19(nn.Module):
   def __init__(self):
     super().__init__()
     vgg19_features = models.vgg19(pretrained=True)
-    self.features = vgg19_features.features
+    features = vgg19_features.features
+    avg_pool = nn.AdaptiveAvgPool2d((1, 1))
+    layers = list(features) + [avg_pool]
+    self.features = nn.Sequential(*layers)
 
     # Turn-off Gradient History
     for param in self.features.parameters():

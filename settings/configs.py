@@ -77,10 +77,11 @@ class TrainingConfig():
     # Conv layer outputs
     # Conv layers, 0, 2, 5, 7, 10, 12, 14, 16, 19, 21, 23, 25, 28, 30, 32, 34
     # -1 equals the raw-styled image
+    # 37 is avg_pooling
     self.style_layers = [
       -1, 0, 2, 5, 7, 10, 12, 14, 16, 19, 21, 23, 25, 28, 30, 32, 34
     ]
-    self.content_layers = [-1, 16, 21, 28, 34]
+    self.content_layers = [37]
     self.styled_content_layers = set(self.style_layers + self.content_layers)
 
 
@@ -103,4 +104,4 @@ class Colab(TrainingConfig):
   def __init__(self):
     super().__init__()
     self.misc.log_data = True
-    self.input_size = 512
+    self.input_size = 256

@@ -46,7 +46,6 @@ def content_loss(content, styled_content):
     loss += F.mse_loss(x1, x2) * config.content_weights[layer]
 
   layer_weights = sum([config.content_weights[l] for l in shared_keys])
-  print(layer_weights)
   loss_scale = config.content_loss_weight / layer_weights
   return loss * loss_scale
 

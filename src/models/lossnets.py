@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 from torchvision import models, transforms
 from collections import defaultdict
+from anyfig import get_config
 
 
 class VGG19(nn.Module):
@@ -14,15 +15,11 @@ class VGG19(nn.Module):
     for param in self.features.parameters():
       param.requires_grad = False
 
-    # Conv layer outputs
-    # Conv layers, 0, 2, 5, 7, 10, 12, 14, 16, 19, 21, 23, 25, 28, 30, 32, 34
-    # -1 equals the raw-styled image
+    config = get_config()
     self.output_layers = dict(
-      style=[-1, 0, 2, 5, 7, 10, 12, 14, 16, 19, 21, 23, 25, 28, 30, 32, 34],
-      content=[-1, 21, 23, 25, 28, 30, 32, 34],
-      styled_content=[
-        -1, 0, 2, 5, 7, 10, 12, 14, 16, 19, 21, 23, 25, 28, 30, 32, 34
-      ],
+      style=config.style_layers,
+      content=config.content_layers,
+      styled_content=config.styled_content_layers,
     )
 
   def forward(self, inputs):

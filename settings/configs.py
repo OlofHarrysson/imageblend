@@ -2,6 +2,7 @@ import anyfig
 import pyjokes
 import random
 from datetime import datetime
+from collections import defaultdict
 
 
 @anyfig.config_class
@@ -62,8 +63,25 @@ class TrainingConfig():
     # Misc configs
     self.misc = MiscConfig()
 
+    # Weight for losses
     self.style_loss_weight = 4e4
     self.content_loss_weight = 1
+
+    # Loss weights for layers
+    self.style_weights = defaultdict(lambda: 1)
+    # self.style_weights[-1] = 10
+
+    self.content_weights = defaultdict(lambda: 1)
+    self.content_weights[-1] = 10
+
+    # Conv layer outputs
+    # Conv layers, 0, 2, 5, 7, 10, 12, 14, 16, 19, 21, 23, 25, 28, 30, 32, 34
+    # -1 equals the raw-styled image
+    self.style_layers = [
+      -1, 0, 2, 5, 7, 10, 12, 14, 16, 19, 21, 23, 25, 28, 30, 32, 34
+    ]
+    self.content_layers = [-1, 21, 23, 25, 28, 30, 32, 34]
+    self.styled_content_layers = set(self.style_layers + self.content_layers)
 
 
 @anyfig.config_class

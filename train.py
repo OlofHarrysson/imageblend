@@ -28,7 +28,6 @@ def train(config):
 
   logger = Logger()
   model = get_model(config)
-  validator = Validator(config)
   optimizer = torch.optim.Adam(model.stylenet.parameters(), lr=config.start_lr)
   lr_scheduler = CosineAnnealingLR(optimizer,
                                    T_max=config.optim_steps,
@@ -57,13 +56,8 @@ def train(config):
   content_fmaps = model.predict(dict(content=content_img))
 
   for optim_steps in range(config.optim_steps):
-    # Forward pass content image through Unet
-    # Forward pass style+content through VGG. Return fmaps
-    # Calculate loss
-    # Step
-
     # Forward pass
-    with autocast(mixed_precision):
+    with autocast(False):
       optimizer.zero_grad()
       inputs = dict(styled_content=styled_image)
       styled_content, styled_img = model(inputs)

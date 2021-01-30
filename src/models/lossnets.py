@@ -18,10 +18,9 @@ class VGG19(nn.Module):
     # Conv layers, 0, 2, 5, 7, 10, 12, 14, 16, 19, 21, 23, 25, 28, 30, 32, 34
     self.output_layers = dict(
       style=[0, 2, 5, 7, 10, 12, 14, 16, 19, 21, 23, 25, 28, 30, 32, 34],
-      content=[0, 2, 5, 7, 10, 12, 14, 16, 19, 21, 23, 25, 28, 30, 32, 34],
-      # content=[25],
+      content=[-1, 25],
       styled_content=[
-        0, 2, 5, 7, 10, 12, 14, 16, 19, 21, 23, 25, 28, 30, 32, 34
+        -1, 0, 2, 5, 7, 10, 12, 14, 16, 19, 21, 23, 25, 28, 30, 32, 34
       ],
     )
 
@@ -29,6 +28,12 @@ class VGG19(nn.Module):
     outputs = defaultdict(dict)
     for input_type, x in inputs.items():
       output_layers = list(self.output_layers[input_type])
+
+      # The input image
+      if -1 in output_layers:
+        outputs[input_type][-1] = x
+        output_layers.remove(-1)
+
       for mod_idx, mod in enumerate(self.features):
         if output_layers:
           x = mod(x)

@@ -1,3 +1,6 @@
+Try to just use content/style loss to see results
+
+
 People tend to use the relu layers of VGG-19 to construct gram matrices. Should be better to take the pre-relu feature map.
 
 Patch matching loss is for when we want to apply the style of hair to content hair. Helps if images aren't aligned. Not interesting for me.

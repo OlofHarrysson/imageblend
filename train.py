@@ -79,7 +79,7 @@ def train(config):
       lr_scheduler.step()
 
       # Log
-      if optim_steps % 10 == 0:
+      if optim_steps % 1 == 0:
         logger.log_image(styled_img, 'Styled Image')
       if optim_steps > 50:
         logger.log_losses(loss_dict, optim_steps)

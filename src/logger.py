@@ -37,6 +37,10 @@ class Logger():
         raise ConnectionError(err_msg) from e
 
   @log_if_active
+  def log_text(self, text):
+    self.vis.text(text)
+
+  @log_if_active
   def log_image(self, image, caption):
     opts = dict(store_history=True, caption=caption)
     self.vis.image(image, opts)

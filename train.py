@@ -49,6 +49,7 @@ def train(config):
 
   logger.log_image(un_norm_img(style_img[0]), 'Style Image')
   logger.log_image(un_norm_img(content_img[0]), 'Content Image')
+  logger.log_text(str(config).replace('\n', '<br>'))
 
   # Training loop
   style_img = style_img.to(model.device)

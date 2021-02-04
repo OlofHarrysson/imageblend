@@ -50,7 +50,7 @@ class TrainingConfig():
     # Start and end learning rate for the scheduler
     self.start_lr: float = 1e-3
     self.end_lr: float = 1e-4
-    self.gradient_clip: float = 1e-1
+    self.gradient_clip: float = 1e0
 
     # Batch size going into the network
     self.batch_size: int = 1
@@ -105,4 +105,4 @@ class Colab(TrainingConfig):
   def __init__(self):
     super().__init__()
     self.misc.log_data = True
-    self.input_size = 1024
+    self.input_size = 512

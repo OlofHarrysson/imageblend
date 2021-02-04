@@ -9,7 +9,7 @@ Patch matching loss is for when we want to apply the style of hair to content ha
 Start by doing style transfer network on one content+style -> VGG19 -> style+content loss.
 
 
-Gradient clipping
+log before Gradient clipping
 
 ~~~~~~~~ Ideas ~~~~~~~~
 Local style transfer

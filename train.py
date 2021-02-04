@@ -65,7 +65,6 @@ def train(config):
       inputs = dict(styled_content=styled_image)
       styled_content, styled_img = model(inputs)
       # styled_img = un_norm_img(styled_img, unnorm=False)
-      styled_img = styled_img.clone().cpu().detach().numpy()
       fmaps = {**style_fmaps, **content_fmaps, **styled_content}
       loss_dict = losses.calc_loss(fmaps)
       loss = sum(loss_dict.values())
@@ -79,7 +78,7 @@ def train(config):
       lr_scheduler.step()
 
       # Log
-      if optim_steps % 1 == 0:
+      if optim_steps % 10 == 0:
         logger.log_image(styled_img, 'Styled Image')
       if optim_steps > 50:
         logger.log_losses(loss_dict, optim_steps)

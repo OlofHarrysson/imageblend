@@ -65,7 +65,7 @@ class TrainingConfig():
 
     # Weight for losses
     self.style_loss_weight = 4e4
-    self.content_loss_weight = 1e-14
+    self.content_loss_weight = 1
 
     # Loss weights for layers
     self.style_weights = defaultdict(lambda: 1)
@@ -80,8 +80,8 @@ class TrainingConfig():
     # Paper relu: 3, 8, 18, 22, 26, 35
     # -1 equals the raw-styled image
     # 37 is avg_pooling
-    self.style_layers = [35]
-    self.content_layers = [37]
+    self.style_layers = [3, 8, 18, 22, 26, 35]
+    self.content_layers = [35, 37]
     self.styled_content_layers = set(self.style_layers + self.content_layers)
 
 

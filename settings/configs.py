@@ -64,7 +64,7 @@ class TrainingConfig():
     self.misc = MiscConfig()
 
     # Weight for losses
-    self.style_loss_weight = 4e4
+    self.style_loss_weight = 7.5e2
     self.content_loss_weight = 1
 
     # Loss weights for layers

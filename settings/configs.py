@@ -80,7 +80,7 @@ class TrainingConfig():
     # Paper relu: 3, 8, 18, 22, 26, 35
     # -1 equals the raw-styled image
     # 37 is avg_pooling
-    self.style_layers = [14]
+    self.style_layers = [16]
     self.content_layers = [35, 37]
     self.styled_content_layers = set(self.style_layers + self.content_layers)
 

@@ -50,7 +50,7 @@ class TrainingConfig():
     # Start and end learning rate for the scheduler
     self.start_lr: float = 1e-3
     self.end_lr: float = 1e-4
-    self.gradient_clip: float = 1
+    self.gradient_clip: float = 1e-3
 
     # Batch size going into the network
     self.batch_size: int = 1

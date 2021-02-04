@@ -72,6 +72,8 @@ def train(config):
 
       # Backward pass
       scaler.scale(loss).backward()
+      torch.nn.utils.clip_grad_norm_(model.stylenet.parameters(),
+                                     config.gradient_clip)
       scaler.step(optimizer)
       scaler.update()
 

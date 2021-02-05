@@ -37,7 +37,8 @@ class MyModel(nn.Module):
     styled_content = self.stylenet(styled_content)
     styled_img = styled_content.clone().detach().cpu().clamp(0, 255).numpy()[0]
     # TODO: Needs to be in range [0,1] but clamp lose gradient information outside? Sigmoid solves nothing...
-    styled_content = styled_content.clamp(0, 255) / 255  # Range [0, 1]
+    styled_content = styled_content / 255  # Range [0, 1]
+    # styled_content = styled_content.clamp(0, 255) / 255  # Range [0, 1]
     # styled_content = torch.sigmoid(styled_content)  # Range [0, 1]
     styled_content = self.normalize(styled_content)
     inputs['styled_content'] = styled_content

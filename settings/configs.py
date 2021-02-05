@@ -48,7 +48,7 @@ class TrainingConfig():
     self.validation_freq: int = 500
 
     # Start and end learning rate for the scheduler
-    self.start_lr: float = 1e-3
+    self.start_lr: float = 3e-3
     self.end_lr: float = 1e-3
     self.gradient_clip: float = 1e0
 
@@ -65,7 +65,7 @@ class TrainingConfig():
     self.misc = MiscConfig()
 
     # Weight for losses
-    self.style_loss_weight = 2e3
+    self.style_loss_weight = 5e3
     self.content_loss_weight = 1
 
     # Loss weights for layers

@@ -52,6 +52,34 @@ class Logger():
     plot(X=[step], Y=[accuracy])
 
   @log_if_active
+  def log_gradients(self, model, step):
+    max_gradients = []
+    avg_gradients = []
+    legends = []
+    for name, params in model.named_parameters():
+      max_ = params.abs().max()
+      avg = params.abs().mean()
+      max_gradients.append(max_.item())
+      avg_gradients.append(avg.item())
+      legends.append(name)
+
+    title = 'Max Abs Gradient'.title()
+    opts = dict(xlabel='Steps', title=title)
+    self.vis.line(Y=np.array(max_gradients).reshape(1, -1),
+                  update='append',
+                  win=title,
+                  X=[step],
+                  opts=opts)
+
+    title = 'Mean Abs Gradient'.title()
+    opts = dict(xlabel='Steps', title=title)
+    self.vis.line(Y=np.array(avg_gradients).reshape(1, -1),
+                  update='append',
+                  win=title,
+                  X=[step],
+                  opts=opts)
+
+  @log_if_active
   def log_losses(self, loss_dict, step):
     legend, losses = [], []
     for name, loss in loss_dict.items():

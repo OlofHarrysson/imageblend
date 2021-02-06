@@ -85,6 +85,7 @@ def train(config):
         logger.log_image(styled_img, 'Styled Image')
       if optim_steps > 50:
         logger.log_losses(loss_dict, optim_steps)
+      logger.log_gradients(model.stylenet, optim_steps)
 
       # pil_img = (styled_img * 255).astype(np.uint8)
       # pil_img = styled_img.astype(np.uint8)

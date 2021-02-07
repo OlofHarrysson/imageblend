@@ -67,7 +67,7 @@ def train(config):
       styled_content, styled_img = model(inputs)
       # styled_img = un_norm_img(styled_img, unnorm=False)
       fmaps = {**style_fmaps, **content_fmaps, **styled_content}
-      loss_dict = losses.calc_loss(fmaps)
+      loss_dict = losses.calc_loss(fmaps, optim_steps)
       loss = sum(loss_dict.values())
 
       # Backward pass

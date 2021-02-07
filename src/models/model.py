@@ -22,10 +22,10 @@ class MyModel(nn.Module):
     super().__init__()
     self.device = 'cpu' if config.gpu < 0 else torch.device('cuda', config.gpu)
 
-    # self.stylenet = stylenets.TransformerResNextNetwork_Pruned(alpha=0.3)
+    # self.stylenet = stylenets.TransformerResNextNetwork_Pruned(alpha=1.0)
     self.stylenet = stylenets.UNet(3, 3)
     # self.stylenet = stylenets.InstanceNet()
-    self.loss_net = lossnets.VGG19()
+    self.lossnet = lossnets.VGG19()
 
     self.normalize = transforms.Normalize((0.485, 0.456, 0.406),
                                           (0.229, 0.224, 0.225))
@@ -35,17 +35,19 @@ class MyModel(nn.Module):
     styled_content = inputs['styled_content']
     # styled_content = self.stylenet(styled_content) + styled_content
     styled_content = self.stylenet(styled_content)
-    styled_img = styled_content.clone().detach()
+    styled_img = styled_content.clone().detach().cpu().clamp(0, 255).numpy()[0]
+    # TODO: Needs to be in range [0,1] but clamp lose gradient information outside? Sigmoid solves nothing...
     styled_content = styled_content / 255  # Range [0, 1]
+    # styled_content = styled_content.clamp(0, 255) / 255  # Range [0, 1]
+    # styled_content = torch.sigmoid(styled_content)  # Range [0, 1]
     styled_content = self.normalize(styled_content)
     inputs['styled_content'] = styled_content
 
-    return self.loss_net(inputs), styled_img[0]
-    # return self.loss_net(inputs), styled_img[0]
+    return self.lossnet(inputs), styled_img
 
   def predict(self, inputs):
     with torch.no_grad():
-      return self.loss_net(inputs)
+      return self.lossnet(inputs)
 
   def save(self, path):
     path = Path(path)

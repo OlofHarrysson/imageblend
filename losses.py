@@ -10,13 +10,13 @@ def calc_loss(outputs, step):
     outputs['styled_content'],
   )
 
-  if step < 50:
-    return style_losses
-
   content_losses = content_loss(
     outputs['content'],
     outputs['styled_content'],
   )
+
+  if step < 50:
+    return content_losses
 
   return {**style_losses, **content_losses}
 

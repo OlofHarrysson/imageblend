@@ -61,7 +61,7 @@ def train(config):
   for optim_steps in progressbar(range(config.optim_steps),
                                  redirect_stdout=True):
     # Forward pass
-    with autocast(False):
+    with autocast(mixed_precision):
       optimizer.zero_grad()
       inputs = dict(styled_content=styled_image)
       styled_content, styled_img = model(inputs)

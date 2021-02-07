@@ -36,7 +36,7 @@ class TrainingConfig():
     self.gpu: int = 0
 
     # Runs the computations with mixed precision. Only works with GPUs enabled
-    self.mixed_precision = True
+    self.mixed_precision = False
 
     # Number of threads to use in data loading
     self.num_workers: int = 0
@@ -81,7 +81,7 @@ class TrainingConfig():
     # Paper relu: 3, 8, 18, 22, 26, 35
     # -1 equals the raw-styled image
     # 37 is avg_pooling
-    self.style_layers = [3, 8, 18, 22, 26]
+    self.style_layers = [3, 8, 22, 26]
     self.content_layers = [18]
     self.styled_content_layers = set(self.style_layers + self.content_layers)
 

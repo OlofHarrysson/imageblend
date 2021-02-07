@@ -5,49 +5,50 @@ from anyfig import get_config
 
 
 def calc_loss(outputs):
-  losses = dict()
-  losses['style'] = style_loss(
+  style_losses = style_loss(
     outputs['style'],
     outputs['styled_content'],
   )
 
-  losses['content'] = content_loss(
+  content_losses = content_loss(
     outputs['content'],
     outputs['styled_content'],
   )
 
-  return losses
+  return {**style_losses, **content_losses}
 
 
 def style_loss(style, styled_content):
   config = get_config()
-  loss = 0
+  losses = dict()
   shared_keys = set(style).intersection(set(styled_content))
   assert shared_keys, 'No common layers'
 
-  for layer in shared_keys:
-    x1, x2 = style[layer], styled_content[layer]
-    loss += F.mse_loss(gram_matrix(x1),
-                       gram_matrix(x2)) * config.style_weights[layer]
-
   layer_weights = sum([config.style_weights[l] for l in shared_keys])
   loss_scale = config.style_loss_weight / layer_weights
-  return loss * loss_scale
+  for layer in shared_keys:
+    x1, x2 = style[layer], styled_content[layer]
+    loss = F.mse_loss(gram_matrix(x1),
+                      gram_matrix(x2)) * config.style_weights[layer]
+    losses[f'style-{layer}'] = loss * loss_scale
+
+  return losses
 
 
 def content_loss(content, styled_content):
   config = get_config()
-  loss = 0
+  losses = dict()
   shared_keys = set(content).intersection(set(styled_content))
   assert shared_keys, 'No common layers'
 
-  for layer in shared_keys:
-    x1, x2 = content[layer], styled_content[layer]
-    loss += F.mse_loss(x1, x2) * config.content_weights[layer]
-
   layer_weights = sum([config.content_weights[l] for l in shared_keys])
   loss_scale = config.content_loss_weight / layer_weights
-  return loss * loss_scale
+  for layer in shared_keys:
+    x1, x2 = content[layer], styled_content[layer]
+    loss = F.mse_loss(x1, x2) * config.content_weights[layer]
+    losses[f'content-{layer}'] = loss * loss_scale
+
+  return losses
 
 
 # def gram_matrix(x):

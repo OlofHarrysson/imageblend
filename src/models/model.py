@@ -25,7 +25,7 @@ class MyModel(nn.Module):
     # self.stylenet = stylenets.TransformerResNextNetwork_Pruned(alpha=1.0)
     self.stylenet = stylenets.UNet(3, 3)
     # self.stylenet = stylenets.InstanceNet()
-    self.loss_net = lossnets.VGG19()
+    self.lossnet = lossnets.VGG19()
 
     self.normalize = transforms.Normalize((0.485, 0.456, 0.406),
                                           (0.229, 0.224, 0.225))
@@ -43,11 +43,11 @@ class MyModel(nn.Module):
     styled_content = self.normalize(styled_content)
     inputs['styled_content'] = styled_content
 
-    return self.loss_net(inputs), styled_img
+    return self.lossnet(inputs), styled_img
 
   def predict(self, inputs):
     with torch.no_grad():
-      return self.loss_net(inputs)
+      return self.lossnet(inputs)
 
   def save(self, path):
     path = Path(path)

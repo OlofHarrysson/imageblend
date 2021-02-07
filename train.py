@@ -65,9 +65,11 @@ def train(config):
       optimizer.zero_grad()
       inputs = dict(styled_content=styled_image)
       styled_content, styled_img = model(inputs)
-      # styled_img = un_norm_img(styled_img, unnorm=False)
       fmaps = {**style_fmaps, **content_fmaps, **styled_content}
-      loss_dict = losses.calc_loss(fmaps, optim_steps)
+
+      # Start with only content loss for faster convergence
+      only_content_loss = optim_steps < 30
+      loss_dict = losses.calc_loss(fmaps, only_content_loss)
       loss = sum(loss_dict.values())
 
       # Backward pass

@@ -4,19 +4,20 @@ import torch.nn.functional as F
 from anyfig import get_config
 
 
-def calc_loss(outputs, step):
-  style_losses = style_loss(
-    outputs['style'],
-    outputs['styled_content'],
-  )
-
+def calc_loss(outputs, only_content_loss=False):
   content_losses = content_loss(
     outputs['content'],
     outputs['styled_content'],
   )
 
-  if step < 30:
+  # Let the losses
+  if only_content_loss:
     return content_losses
+
+  style_losses = style_loss(
+    outputs['style'],
+    outputs['styled_content'],
+  )
 
   return {**style_losses, **content_losses}
 

@@ -6,9 +6,6 @@ import torch.nn as nn
 from torch.cuda.amp import GradScaler, autocast
 from torch.optim.lr_scheduler import CosineAnnealingLR
 from PIL import Image
-from pathlib import Path
-from progressbar import progressbar
-import numpy as np
 
 from src.data.data import setup_dataloaders
 from src.models.model import get_model
@@ -30,6 +27,7 @@ def train(config):
 
   logger = Logger()
   model = get_model(config)
+  validator = Validator(config)
   optimizer = torch.optim.Adam(model.stylenet.parameters(), lr=config.start_lr)
   lr_scheduler = CosineAnnealingLR(optimizer,
                                    T_max=config.optim_steps,
@@ -49,52 +47,49 @@ def train(config):
 
   logger.log_image(un_norm_img(style_img[0]), 'Style Image')
   logger.log_image(un_norm_img(content_img[0]), 'Content Image')
-  logger.log_text(str(config).replace('\n', '<br>'))
 
   # Training loop
-  style_img = style_img.to(model.device)
-  content_img = content_img.to(model.device)
-  styled_image = styled_image.to(model.device)
+  # style_img = style_img.to(model.device)
+  # content_img = content_img.to(model.device)
   style_fmaps = model.predict(dict(style=style_img))
   content_fmaps = model.predict(dict(content=content_img))
 
-  for optim_steps in progressbar(range(config.optim_steps),
-                                 redirect_stdout=True):
+  for optim_steps in range(config.optim_steps):
+    # Forward pass content image through Unet
+    # Forward pass style+content through VGG. Return fmaps
+    # Calculate loss
+    # Step
+
     # Forward pass
     with autocast(mixed_precision):
       optimizer.zero_grad()
       inputs = dict(styled_content=styled_image)
       styled_content, styled_img = model(inputs)
+      # styled_img = un_norm_img(styled_img, unnorm=False)
+      styled_img = styled_img.clone().cpu().detach().numpy()
       fmaps = {**style_fmaps, **content_fmaps, **styled_content}
-
-      # Start with only content loss for faster convergence
-      only_content_loss = optim_steps < 30
-      loss_dict = losses.calc_loss(fmaps, only_content_loss)
+      loss_dict = losses.calc_loss(fmaps)
       loss = sum(loss_dict.values())
 
       # Backward pass
       scaler.scale(loss).backward()
-      torch.nn.utils.clip_grad_norm_(model.stylenet.parameters(),
-                                     config.gradient_clip)
       scaler.step(optimizer)
       scaler.update()
 
       # Decrease learning rate
       lr_scheduler.step()
+      print(
+        f"Step: {optim_steps}, loss: {loss.item()}, style: {loss_dict['style']}, content: {loss_dict['content']}"
+      )
 
       # Log
-      if optim_steps % 10 == 0:
-        logger.log_image(styled_img, 'Styled Image')
-      if optim_steps > 50:
-        logger.log_losses(loss_dict, optim_steps)
-      # logger.log_gradients(model.stylenet, optim_steps)
+      logger.log_image(styled_img, 'Styled Image')
 
+      import numpy as np
       # pil_img = (styled_img * 255).astype(np.uint8)
-      # pil_img = styled_img.astype(np.uint8)
-      # pil_img = np.moveaxis(pil_img, 0, -1)
-      # outdir = Path('output') / 'stylenet'
-      # outdir.mkdir(parents=True, exist_ok=True)
-      # Image.fromarray(pil_img).save(outdir / f'{optim_steps}.png')
+      pil_img = styled_img.astype(np.uint8)
+      pil_img = np.moveaxis(pil_img, 0, -1)
+      Image.fromarray(pil_img).save(f'output/stylenet/{optim_steps}.png')
 
 
 if __name__ == '__main__':

@@ -4,55 +4,35 @@ import torch.nn.functional as F
 from anyfig import get_config
 
 
-def calc_loss(outputs, only_content_loss=False):
-  content_losses = content_loss(
-    outputs['content'],
-    outputs['styled_content'],
-  )
-
-  # Let the losses
-  if only_content_loss:
-    return content_losses
-
-  style_losses = style_loss(
+def calc_loss(outputs):
+  config = get_config()
+  losses = dict()
+  losses['style'] = style_loss(
     outputs['style'],
     outputs['styled_content'],
-  )
+  ) * config.style_loss_weight
 
-  return {**style_losses, **content_losses}
+  losses['content'] = content_loss(
+    outputs['content'],
+    outputs['styled_content'],
+  ) * config.content_loss_weight
+
+  return losses
 
 
 def style_loss(style, styled_content):
-  config = get_config()
-  losses = dict()
-  shared_keys = set(style).intersection(set(styled_content))
-  assert shared_keys, 'No common layers'
-
-  layer_weights = sum([config.style_weights[l] for l in shared_keys])
-  loss_scale = config.style_loss_weight / layer_weights
-  for layer in shared_keys:
-    x1, x2 = style[layer], styled_content[layer]
-    loss = F.mse_loss(gram_matrix(x1),
-                      gram_matrix(x2)) * config.style_weights[layer]
-    losses[f'style-{layer}'] = loss * loss_scale
-
-  return losses
+  loss = 0
+  for x1, x2 in zip(style, styled_content):
+    loss += F.mse_loss(gram_matrix(x1), gram_matrix(x2))
+  return loss
 
 
 def content_loss(content, styled_content):
-  config = get_config()
-  losses = dict()
-  shared_keys = set(content).intersection(set(styled_content))
-  assert shared_keys, 'No common layers'
-
-  layer_weights = sum([config.content_weights[l] for l in shared_keys])
-  loss_scale = config.content_loss_weight / layer_weights
-  for layer in shared_keys:
-    x1, x2 = content[layer], styled_content[layer]
-    loss = F.mse_loss(x1, x2) * config.content_weights[layer]
-    losses[f'content-{layer}'] = loss * loss_scale
-
-  return losses
+  loss = 0
+  styled_content = [styled_content[1]]  # TODO: Might select the wrong one
+  for x1, x2 in zip(content, styled_content):
+    loss += F.mse_loss(x1, x2)
+  return loss
 
 
 # def gram_matrix(x):

@@ -24,7 +24,7 @@ class InstanceNet(nn.Module):
     for mod in self.children():
       x = mod(x)
 
-    # x = self.tanh(x) * 150 + 255. / 2  # [-22.5, 277.5]
+    # x = self.tanh(x) * 150 + 255. / 2  # TODO: Wtf is this... from github
     x = (self.tanh(x) + 1) * 255 / 2  # [0, 255]
 
     return x
@@ -88,8 +88,8 @@ class UNet(nn.Module):
     self.outc = OutConv(64, n_classes)
     self.tanh = nn.Tanh()
 
-  def forward(self, inputs):
-    x1 = self.inc(inputs)
+  def forward(self, x):
+    x1 = self.inc(x)
     x2 = self.down1(x1)
     x3 = self.down2(x2)
     x4 = self.down3(x3)
@@ -100,7 +100,7 @@ class UNet(nn.Module):
     x = self.up4(x, x1)
     x = self.outc(x)
     x = (self.tanh(x) + 1) * 255 / 2  # [0, 255]
-    # x = self.tanh(x) * 150 + 255. / 2  # [-22.5, 277.5]
+    # print(x.min(), x.max())
 
     return x
 

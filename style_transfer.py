@@ -14,11 +14,10 @@ import copy
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # desired size of the output image
-imsize = 512 if torch.cuda.is_available() else 256  # use small size if no gpu
+imsize = 512 if torch.cuda.is_available() else 512  # use small size if no gpu
 
 loader = transforms.Compose([
   transforms.Resize(imsize),  # scale imported image
-  transforms.CenterCrop(imsize),
   transforms.ToTensor()
 ])  # transform it into a torch tensor
 
@@ -33,8 +32,8 @@ def image_loader(image_name):
 style_img = image_loader("datasets/easy/style.jpg")
 content_img = image_loader("datasets/easy/content.jpg")
 
-# assert style_img.size() == content_img.size(), \
-#     "we need to import style and content images of the same size"
+assert style_img.size() == content_img.size(), \
+    "we need to import style and content images of the same size"
 
 plt.ion()
 unloader = transforms.ToPILImage()  # reconvert into PIL image

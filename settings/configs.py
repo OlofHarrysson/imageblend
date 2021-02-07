@@ -2,7 +2,6 @@ import anyfig
 import pyjokes
 import random
 from datetime import datetime
-from collections import defaultdict
 
 
 @anyfig.config_class
@@ -36,7 +35,7 @@ class TrainingConfig():
     self.gpu: int = 0
 
     # Runs the computations with mixed precision. Only works with GPUs enabled
-    self.mixed_precision = False
+    self.mixed_precision = True
 
     # Number of threads to use in data loading
     self.num_workers: int = 0
@@ -48,9 +47,8 @@ class TrainingConfig():
     self.validation_freq: int = 500
 
     # Start and end learning rate for the scheduler
-    self.start_lr: float = 3e-3
+    self.start_lr: float = 1e-3
     self.end_lr: float = 1e-3
-    self.gradient_clip: float = 1e0
 
     # Batch size going into the network
     self.batch_size: int = 1
@@ -64,26 +62,8 @@ class TrainingConfig():
     # Misc configs
     self.misc = MiscConfig()
 
-    # Weight for losses
-    self.style_loss_weight = 8e3
-    self.content_loss_weight = 1e-3
-
-    # Loss weights for layers
-    self.style_weights = defaultdict(lambda: 1)
-    # self.style_weights[-1] = 10
-
-    self.content_weights = defaultdict(lambda: 1)
-    # self.content_weights[-1] = 10
-
-    # Conv layer outputs
-    # Conv layers: 0, 2, 5, 7, 10, 12, 14, 16, 19, 21, 23, 25, 28, 30, 32, 34
-    # Relu layers: 1, 3, 6, 8, 11, 13, 15, 17, 20, 22, 24, 26, 29, 31, 33, 35
-    # Paper relu: 3, 8, 17/18?, 22, 26, 35
-    # -1 equals the raw-styled image
-    # 37 is avg_pooling
-    self.style_layers = [3, 8, 22, 26]
-    self.content_layers = [17]
-    self.styled_content_layers = set(self.style_layers + self.content_layers)
+    self.style_loss_weight = 1e5
+    self.content_loss_weight = 7.5
 
 
 @anyfig.config_class
@@ -101,8 +81,7 @@ class TrainLaptop(TrainingConfig):
 
 
 @anyfig.config_class
-class Colab(TrainingConfig):
+class TrainMegaMachine(TrainingConfig):
   def __init__(self):
     super().__init__()
-    self.misc.log_data = True
-    self.input_size = 512
+    self.batch_size = self.batch_size * 4

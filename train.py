@@ -21,7 +21,7 @@ from src.utils.meta_utils import speed_up_cuda
 import src.utils.setup_utils as setup_utils
 import losses
 
-from src.transforms import un_norm_img
+from src.transforms import un_norm_img, smooth_distance_mask
 
 
 def train(config):
@@ -44,17 +44,21 @@ def train(config):
   # progressbar = Progressbar(n_epochs, n_batches)
 
   # Data
-  style_img, content_img = next(iter(dataloaders.train))
-  styled_image = content_img.clone()
+  style_img, content_img, mask_img = next(iter(dataloaders.train))
+  soft_mask = smooth_distance_mask(mask_img)
+  styled_img = content_img.clone()
 
   logger.log_image(un_norm_img(style_img[0]), 'Style Image')
   logger.log_image(un_norm_img(content_img[0]), 'Content Image')
+  logger.log_image(un_norm_img(styled_img[0]), 'Styled Image')
+  logger.log_image(soft_mask, 'Soft Mask')
   logger.log_text(str(config).replace('\n', '<br>'))
 
   # Training loop
   style_img = style_img.to(model.device)
   content_img = content_img.to(model.device)
-  styled_image = styled_image.to(model.device)
+  styled_img = styled_img.to(model.device)
+  soft_mask = soft_mask.to(model.device)
   style_fmaps = model.predict(dict(style=style_img))
   content_fmaps = model.predict(dict(content=content_img))
 
@@ -63,13 +67,18 @@ def train(config):
     # Forward pass
     with autocast(mixed_precision):
       optimizer.zero_grad()
-      inputs = dict(styled_content=styled_image)
-      styled_content, styled_img = model(inputs)
+      inputs = dict(styled_content=styled_img)
+      styled_content, out_img = model(inputs)
       fmaps = {**style_fmaps, **content_fmaps, **styled_content}
 
       # Start with only content loss for faster convergence
-      only_content_loss = optim_steps < 30
-      loss_dict = losses.calc_loss(fmaps, only_content_loss)
+      warmup = optim_steps < config.warmup_steps
+      loss_dict = losses.calc_loss(
+        fmaps,
+        soft_mask,
+        out_img,
+        warmup,
+      )
       loss = sum(loss_dict.values())
 
       # Backward pass
@@ -83,9 +92,9 @@ def train(config):
       lr_scheduler.step()
 
       # Log
-      if optim_steps % 10 == 0:
-        logger.log_image(styled_img, 'Styled Image')
-      if optim_steps > 50:
+      if optim_steps % 5 == 0:
+        logger.log_image(out_img[0], 'Styled Image')
+      if not warmup:
         logger.log_losses(loss_dict, optim_steps)
       # logger.log_gradients(model.stylenet, optim_steps)
 

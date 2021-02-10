@@ -65,8 +65,9 @@ class TrainingConfig():
     self.misc = MiscConfig()
 
     # Weight for losses
-    self.style_loss_weight = 8e3
+    self.style_loss_weight = 8e-13
     self.content_loss_weight = 1e-3
+    self.distance_loss_weight = 1e-6
 
     # Loss weights for layers
     self.style_weights = defaultdict(lambda: 1)
@@ -85,6 +86,8 @@ class TrainingConfig():
     self.content_layers = [17]
     self.styled_content_layers = set(self.style_layers + self.content_layers)
 
+    self.warmup_steps = 50
+
 
 @anyfig.config_class
 class TrainLaptop(TrainingConfig):
@@ -97,6 +100,7 @@ class TrainLaptop(TrainingConfig):
     '''
     self.gpu: int = -1
     self.misc.log_data = True
+    self.warmup_steps = 5
     # self.misc.save_experiment: bool = True
 
 

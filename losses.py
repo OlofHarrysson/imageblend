@@ -4,22 +4,22 @@ import torch.nn.functional as F
 from anyfig import get_config
 
 
-def calc_loss(outputs, only_content_loss=False):
+def calc_loss(outputs, soft_mask, styled_img, warmup=False):
   content_losses = content_loss(
     outputs['content'],
     outputs['styled_content'],
   )
+  dist_loss = distance_loss(soft_mask, styled_img)
 
-  # Let the losses
-  if only_content_loss:
-    return content_losses
+  if warmup:
+    return {**content_losses, **dist_loss}
 
   style_losses = style_loss(
     outputs['style'],
     outputs['styled_content'],
   )
 
-  return {**style_losses, **content_losses}
+  return {**style_losses, **content_losses, **dist_loss}
 
 
 def style_loss(style, styled_content):
@@ -55,23 +55,17 @@ def content_loss(content, styled_content):
   return losses
 
 
-# def gram_matrix(x):
-#   a, b, c, d = x.size()  # a=batch size(=1)
-#   # b=number of feature maps
-#   # (c,d)=dimensions of a f. map (N=c*d)
-
-#   features = x.view(a * b, c * d)  # resise F_XL into \hat F_XL
-
-#   G = torch.mm(features, features.t())  # compute the gram product
-
-#   # we 'normalize' the values of the gram matrix
-#   # by dividing by the number of element in each feature maps.
-#   return G.div(a * b * c * d)
-
-
 # Gram Matrix
 def gram_matrix(tensor):
   B, C, H, W = tensor.shape
   x = tensor.view(B, C, H * W)
   x_t = x.transpose(1, 2)
   return torch.bmm(x, x_t) / (C * H * W)
+
+
+def distance_loss(soft_mask, styled_content):
+  config = get_config()
+  masked_content = soft_mask * styled_content
+  loss = F.mse_loss(masked_content, torch.zeros_like(masked_content))
+  scaled_loss = loss * config.distance_loss_weight
+  return dict(distance=scaled_loss)

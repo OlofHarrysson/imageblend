@@ -22,10 +22,11 @@ class Augmenter():
     im_size = get_config().input_size
 
     self.augmentations = [
-      iaa.Resize({
-        "height": im_size,
-        "width": im_size
-      }),
+      iaa.Noop(),  # Bit stupid but have to have one augmentation for assert
+      # iaa.Resize({
+      #   "height": im_size,
+      #   "width": im_size
+      # }),
       transforms.ToTensor(),
       transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
     ]

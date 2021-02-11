@@ -38,15 +38,11 @@ def train(config):
   mixed_precision = config.mixed_precision and model.device != 'cpu'
   scaler = GradScaler(enabled=mixed_precision)
 
-  # Init progressbar
-  # n_batches = len(dataloaders.train)
-  # n_epochs = math.ceil(config.optim_steps / n_batches)
-  # progressbar = Progressbar(n_epochs, n_batches)
-
   # Data
   style_img, content_img, mask_img = next(iter(dataloaders.train))
   soft_mask = smooth_distance_mask(mask_img)
   styled_img = content_img.clone()
+  print(style_img.shape)
 
   logger.log_image(un_norm_img(style_img[0]), 'Style Image')
   logger.log_image(un_norm_img(content_img[0]), 'Content Image')

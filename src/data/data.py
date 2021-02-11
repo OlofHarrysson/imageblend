@@ -35,8 +35,13 @@ class ImageTransfer(Dataset):
     style_img = Image.open(self.data_root / 'style.jpg')
     raw_content_img = Image.open(self.data_root / 'content.jpg')
     mask = Image.open(self.data_root / 'mask.jpg')
+    bbox = mask.getbbox()
     content_image = style_img.copy()
     content_image.paste(raw_content_img, mask=mask)
+
+    style_img = style_img.crop(bbox)
+    content_image = content_image.crop(bbox)
+    mask = mask.crop(bbox)
 
     mask_img = self.augmenter(mask, end=-2)
     return self.augmenter(style_img), self.augmenter(content_image), mask_img

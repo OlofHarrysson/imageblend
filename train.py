@@ -58,6 +58,7 @@ def train(config):
 
   # Training loop
   style_img = style_img.to(model.device)
+  style2_img = style2_img.to(model.device)
   content_img = content_img.to(model.device)
   styled_img = styled_img.to(model.device)
   soft_mask = soft_mask.to(model.device)

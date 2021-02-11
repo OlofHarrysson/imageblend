@@ -45,17 +45,14 @@ def train(config):
   styled_img = content_img.clone()
 
   mask_pil_img = tensor2img(mask_img)
-  styled_pil_img = tensor2img(styled_img)
   src_pil_img = tensor2img(src_img)
   bbox = mask_pil_img.getbbox()
-  src_pil_img.paste(styled_pil_img, box=bbox, mask=mask_pil_img.crop(bbox))
 
   logger.log_image(un_norm_img(style_img[0]), 'Style Image')
   logger.log_image(un_norm_img(content_img[0]), 'Content Image')
   logger.log_image(un_norm_img(styled_img[0]), 'Styled Image')
   logger.log_image(mask_img, 'Mask')
   logger.log_image(soft_mask, 'Soft Mask')
-  logger.log_image(img2tensor(src_pil_img), 'Composite Image')
   logger.log_text(str(config).replace('\n', '<br>'))
 
   # Training loop

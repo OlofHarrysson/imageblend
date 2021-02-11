@@ -36,7 +36,7 @@ class ImageTransfer(Dataset):
     style_img = Image.open(self.data_root / 'style.jpg')
     src_img = np.array(style_img)
     raw_content_img = Image.open(self.data_root / 'content.jpg')
-    mask = Image.open(self.data_root / 'mask.jpg')
+    mask = Image.open(self.data_root / 'mask.png')
     bbox = mask.getbbox()
     content_image = style_img.copy()
     content_image.paste(raw_content_img, mask=mask)

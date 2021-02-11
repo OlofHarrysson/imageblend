@@ -40,7 +40,8 @@ def train(config):
   scaler = GradScaler(enabled=mixed_precision)
 
   # Data
-  style_img, content_img, mask_img, src_img = next(iter(dataloaders.train))
+  style_img, content_img, mask_img, src_img, style2_img = next(
+    iter(dataloaders.train))
   soft_mask = smooth_distance_mask(mask_img)
   styled_img = content_img.clone()
 
@@ -60,7 +61,8 @@ def train(config):
   content_img = content_img.to(model.device)
   styled_img = styled_img.to(model.device)
   soft_mask = soft_mask.to(model.device)
-  style_fmaps = model.predict(dict(style=style_img))
+  # style_fmaps = model.predict(dict(style=style_img))
+  style_fmaps = model.predict(dict(style=style2_img))
   content_fmaps = model.predict(dict(content=content_img))
 
   for optim_steps in progressbar(range(config.optim_steps),

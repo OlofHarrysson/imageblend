@@ -34,6 +34,7 @@ class ImageTransfer(Dataset):
 
   def __getitem__(self, index):
     style_img = Image.open(self.data_root / 'style.jpg')
+    style2_img = Image.open(self.data_root / 'style2.jpg')
     src_img = np.array(style_img)
     raw_content_img = Image.open(self.data_root / 'content.jpg')
     mask = Image.open(self.data_root / 'mask.png')
@@ -47,4 +48,4 @@ class ImageTransfer(Dataset):
 
     mask_img = self.augmenter(mask, end=-2)
     return self.augmenter(style_img), self.augmenter(
-      content_image), mask_img, src_img
+      content_image), mask_img, src_img, self.augmenter(style2_img)

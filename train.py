@@ -39,16 +39,24 @@ def train(config):
   scaler = GradScaler(enabled=mixed_precision)
 
   # Data
-  style_img, content_img, mask_img = next(iter(dataloaders.train))
+  style_img, content_img, mask_img, src_img = next(iter(dataloaders.train))
   soft_mask = smooth_distance_mask(mask_img)
   styled_img = content_img.clone()
-  print(style_img.shape)
+
+  mask_pil_img = tensor2img(mask_img)
+  styled_pil_img = tensor2img(styled_img)
+  bbox = mask_pil_img.getbbox()
+  # mask = mask.crop(bbox)
+  src_img.paste(styled_pil_img, box=bbox, mask=mask_pil_img)
 
   logger.log_image(un_norm_img(style_img[0]), 'Style Image')
   logger.log_image(un_norm_img(content_img[0]), 'Content Image')
   logger.log_image(un_norm_img(styled_img[0]), 'Styled Image')
+  logger.log_image(mask_img, 'Mask')
   logger.log_image(soft_mask, 'Soft Mask')
+  logger.log_image(src_img, 'Composite Image')
   logger.log_text(str(config).replace('\n', '<br>'))
+  qwe
 
   # Training loop
   style_img = style_img.to(model.device)
@@ -100,6 +108,12 @@ def train(config):
       # outdir = Path('output') / 'stylenet'
       # outdir.mkdir(parents=True, exist_ok=True)
       # Image.fromarray(pil_img).save(outdir / f'{optim_steps}.png')
+
+
+def tensor2img(img):
+  img = img.astype(np.uint8)
+  img = np.moveaxis(img, 0, -1)
+  return Image.fromarray(img)
 
 
 if __name__ == '__main__':

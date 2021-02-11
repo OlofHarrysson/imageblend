@@ -2,6 +2,7 @@ from torch.utils.data import Dataset, DataLoader
 from collections import namedtuple
 from anyfig import get_config
 from PIL import Image
+import numpy as np
 
 from ..transforms import get_train_augmenter
 from ..utils.meta_utils import get_project_root
@@ -33,6 +34,7 @@ class ImageTransfer(Dataset):
 
   def __getitem__(self, index):
     style_img = Image.open(self.data_root / 'style.jpg')
+    src_img = np.array(style_img)
     raw_content_img = Image.open(self.data_root / 'content.jpg')
     mask = Image.open(self.data_root / 'mask.jpg')
     bbox = mask.getbbox()
@@ -41,7 +43,8 @@ class ImageTransfer(Dataset):
 
     style_img = style_img.crop(bbox)
     content_image = content_image.crop(bbox)
-    mask = mask.crop(bbox)
+    # mask = mask.crop(bbox)
 
     mask_img = self.augmenter(mask, end=-2)
-    return self.augmenter(style_img), self.augmenter(content_image), mask_img
+    return self.augmenter(style_img), self.augmenter(
+      content_image), mask_img, src_img

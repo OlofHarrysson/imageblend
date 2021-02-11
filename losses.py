@@ -9,17 +9,19 @@ def calc_loss(outputs, soft_mask, styled_img, warmup=False):
     outputs['content'],
     outputs['styled_content'],
   )
-  dist_loss = distance_loss(soft_mask, styled_img)
+  # dist_loss = distance_loss(soft_mask, styled_img)
 
   if warmup:
-    return {**content_losses, **dist_loss}
+    return {**content_losses}
+    # return {**content_losses, **dist_loss}
 
   style_losses = style_loss(
     outputs['style'],
     outputs['styled_content'],
   )
 
-  return {**style_losses, **content_losses, **dist_loss}
+  return {**style_losses, **content_losses}
+  # return {**style_losses, **content_losses, **dist_loss}
 
 
 def style_loss(style, styled_content):

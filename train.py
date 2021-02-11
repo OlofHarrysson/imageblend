@@ -9,6 +9,7 @@ from PIL import Image
 from pathlib import Path
 from progressbar import progressbar
 import numpy as np
+import torchvision.transforms.functional as TF
 
 from src.data.data import setup_dataloaders
 from src.models.model import get_model
@@ -45,18 +46,17 @@ def train(config):
 
   mask_pil_img = tensor2img(mask_img)
   styled_pil_img = tensor2img(styled_img)
+  src_pil_img = tensor2img(src_img)
   bbox = mask_pil_img.getbbox()
-  # mask = mask.crop(bbox)
-  src_img.paste(styled_pil_img, box=bbox, mask=mask_pil_img)
+  src_pil_img.paste(styled_pil_img, box=bbox, mask=mask_pil_img.crop(bbox))
 
   logger.log_image(un_norm_img(style_img[0]), 'Style Image')
   logger.log_image(un_norm_img(content_img[0]), 'Content Image')
   logger.log_image(un_norm_img(styled_img[0]), 'Styled Image')
   logger.log_image(mask_img, 'Mask')
   logger.log_image(soft_mask, 'Soft Mask')
-  logger.log_image(src_img, 'Composite Image')
+  logger.log_image(img2tensor(src_pil_img), 'Composite Image')
   logger.log_text(str(config).replace('\n', '<br>'))
-  qwe
 
   # Training loop
   style_img = style_img.to(model.device)
@@ -98,6 +98,12 @@ def train(config):
       # Log
       if optim_steps % 5 == 0:
         logger.log_image(out_img[0], 'Styled Image')
+        styled_pil_img = tensor2img(out_img)
+        src_pil_img.paste(styled_pil_img,
+                          box=bbox,
+                          mask=mask_pil_img.crop(bbox))
+        logger.log_image(img2tensor(src_pil_img), 'Composite Image')
+
       if not warmup:
         logger.log_losses(loss_dict, optim_steps)
       # logger.log_gradients(model.stylenet, optim_steps)
@@ -111,9 +117,20 @@ def train(config):
 
 
 def tensor2img(img):
-  img = img.astype(np.uint8)
-  img = np.moveaxis(img, 0, -1)
+  img = img.squeeze().detach().cpu()
+  img = img.numpy().astype(np.uint8)
+  if img.ndim == 3 and img.shape[0] == 3:
+    img = np.moveaxis(img, 0, -1)
+
   return Image.fromarray(img)
+
+
+def img2tensor(img):
+  img = np.array(img)
+  if img.ndim == 3 and img.shape[-1] == 3:
+    img = np.moveaxis(img, -1, 0)
+  return torch.from_numpy(img)
+  # return TF.pil_to_tensor(img) # Gives warning
 
 
 if __name__ == '__main__':

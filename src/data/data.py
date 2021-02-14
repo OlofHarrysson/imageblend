@@ -43,4 +43,4 @@ class ImageTransfer(Dataset):
   def __getitem__(self, index):
     style_img = Image.open(self.data_root / 'style.jpg')
     content_img = Image.open(self.data_root / 'content.jpg')
-    return self.transforms(style_img), self.transforms(content_img)
+    return self.transforms(style_img, start=1), self.transforms(content_img)

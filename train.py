@@ -10,6 +10,7 @@ from pathlib import Path
 from progressbar import progressbar
 import numpy as np
 import torchvision.transforms.functional as TF
+import time
 
 from src.data.data import setup_dataloaders
 from src.models.model import get_model
@@ -65,6 +66,7 @@ def train(config):
   # style_fmaps = model.predict(dict(style=style_img))
   style_fmaps = model.predict(dict(style=style2_img))
   content_fmaps = model.predict(dict(content=content_img))
+  last_log_time = time.time()
 
   for optim_steps in progressbar(range(config.optim_steps),
                                  redirect_stdout=True):
@@ -96,7 +98,8 @@ def train(config):
       lr_scheduler.step()
 
       # Log
-      if optim_steps % 5 == 0:
+      if time.time() - last_log_time > 5:
+        last_log_time = time.time()
         logger.log_image(out_img[0], 'Styled Image')
         styled_pil_img = tensor2img(out_img)
         src_pil_img.paste(styled_pil_img,
